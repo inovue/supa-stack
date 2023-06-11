@@ -1,4 +1,9 @@
 import type { V2_MetaFunction } from "@remix-run/node";
+import { json } from "@remix-run/node";
+import { useLoaderData } from "@remix-run/react";
+
+import { PrismaClient,  } from "@prisma/client";
+
 
 export const meta: V2_MetaFunction = () => {
   return [
@@ -7,10 +12,46 @@ export const meta: V2_MetaFunction = () => {
   ];
 };
 
+
+export let loader = async () => {
+  const prisma = new PrismaClient()
+  let items = await prisma.stock.findMany({
+    orderBy: [ { id: 'desc', } ],
+    include: {
+      commentBoard: {
+        include: {
+          comments: {
+            orderBy: [ { id: 'desc', } ],
+          },
+        },
+      }
+    },
+  });
+  await prisma.$disconnect();
+  return json(items);
+}
+
 export default function Index() {
+  let stocks = useLoaderData<typeof loader>();
+
   return (
     <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
       <h1>Welcome to Remix</h1>
+      
+      <h2>Stocks</h2>
+      {stocks.map((stock) => (
+        <div key={stock.id}>
+          <h3>{stock.title}</h3>
+          <p>{stock.content}</p>
+          {stock.commentBoard?.comments.map((comment) => (
+            <div key={comment.id}>
+              <p>{comment.content}</p>
+            </div>
+          ))}
+
+        </div>
+      ))}
+
       <ul>
         <li>
           <a
