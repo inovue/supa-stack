@@ -4,7 +4,7 @@ import { useLoaderData } from "@remix-run/react";
 
 import { Button } from "primereact/button";
 
-import { PrismaClient } from "@prisma/client";
+import { db } from "~/services/db.server";
 import { useState } from "react";
 
 
@@ -17,8 +17,7 @@ export const meta: V2_MetaFunction = () => {
 
 
 export let loader = async () => {
-  const prisma = new PrismaClient()
-  let items = await prisma.stock.findMany({
+  let items = await db.stock.findMany({
     orderBy: [ { id: 'desc', } ],
     include: {
       commentBoard: {
@@ -30,7 +29,6 @@ export let loader = async () => {
       }
     },
   });
-  await prisma.$disconnect();
   return json(items);
 }
 
