@@ -2,7 +2,7 @@
   "private": true,
   "sideEffects": false,
   "scripts": {
-    "setup":  "npm i && prisma generate",
+    "setup": "npm i && prisma generate",
     "build": "remix build",
     "deploy": "fly deploy --remote-only",
     "dev": "remix dev",
@@ -16,6 +16,9 @@
     "@remix-run/react": "^1.17.0",
     "@remix-run/serve": "^1.17.0",
     "isbot": "^3.6.8",
+    "primeflex": "^3.3.1",
+    "primeicons": "^6.0.1",
+    "primereact": "^9.5.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },

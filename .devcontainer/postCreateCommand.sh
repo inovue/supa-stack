@@ -12,4 +12,7 @@ echo "git config --global user.name \"Your Name\""
 echo "git config --global user.email \"Your Email\""
 echo "-----------------------------------------------"
 
+cd remix && npm run setup && cd ../
+supabase start
+
 echo "FINISH Install"

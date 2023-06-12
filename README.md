@@ -9,11 +9,40 @@
 * [devcontainers/images](https://github.com/devcontainers/images/tree/main/src/typescript-node)
 * [Available Dev Container Features](https://containers.dev/features)
 
+### Example
+*[PrimeReact + Remix.run](https://github.com/primefaces/primereact-examples/tree/main/remix-run-basic)
+
+### how to start
+```
+cd remix && npm run setup && cd ../
+```
 
 
 ### Create a new project
 ```
 npx create-remix@latest
-npx prisma init
+cd remix && npx prisma init && cd ../
 npx supabase init
+```
+
+
+## UI (PrimeFace)
+* [PrimeFlex](https://www.primefaces.org/primeflex/)
+* [PrimeIcons](https://primereact.org/icons/)
+* [PrimeReact](https://primereact.org/installation/)
+```
+npm i primeflex primeicons primereact
+```
+
+
+### Prisma Command
+[Prisma migration](https://fig.io/manual/prisma/migrate)
+````
+
+# ローカルにマイグレーション作成のみ
+npx prisma migrate dev --create-only --name {migration_name}
+
+# DBへの適応のみ (migrations -> DB)
+npx prisma migrate deploy --preview-feature
+
 ```

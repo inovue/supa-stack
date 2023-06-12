@@ -1,5 +1,5 @@
 {
-  "name": "ws-python",
+  "name": "supa-stack",
   "image": "mcr.microsoft.com/devcontainers/typescript-node:18-bullseye",
   "containerEnv": {
     "TZ": "Asia/Tokyo"
@@ -36,12 +36,12 @@
         }
       },
       "extensions": [
-		"GitHub.copilot",
-		"esbenp.prettier-vscode",
-		"ms-vscode.live-server",
-		"denoland.vscode-deno",
-		"Prisma.prisma"
-	]
+        "GitHub.copilot",
+        "esbenp.prettier-vscode",
+        "ms-vscode.live-server",
+        "denoland.vscode-deno",
+        "Prisma.prisma"
+      ]
     }
   }
 }
