@@ -6,7 +6,7 @@ type MyInputProps = {
   label: string;
 };
 
-export const MyInput = ({ name, label }: MyInputProps) => {
+export const FormInput = ({ name, label }: MyInputProps) => {
   const { error, getInputProps } = useField(name);
   return (
     <div>
