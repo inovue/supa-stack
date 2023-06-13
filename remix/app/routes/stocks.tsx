@@ -20,7 +20,7 @@ export default function Stocks() {
   const stocks = useLoaderData<typeof loader>();
 
   const header = (
-    <div className={classNames(['flex', 'align-items-center'])}>
+    <div className={classNames(['flex', 'align-items-center', 'px-3'])}>
       <div className={classNames(['text-2xl', 'font-bold'])}>Stocks</div>
       <div className={classNames(['flex-1'])}></div>
       <Link to="create">
@@ -38,10 +38,11 @@ export default function Stocks() {
   )
   return (
     <div>
-      <DataTable value={stocks} header={header} footer={footer} tableStyle={{ minWidth: '60rem' }}>
-        <Column body={editBodyTemplate}></Column>
-        <Column field="id" header="ID"></Column>
-        <Column field="title" header="Title"></Column>
+      <DataTable value={stocks} header={header} footer={footer} size='small' tableStyle={{ }}>
+        
+        <Column field="id" header="ID"  style={{width:'6rem'}}></Column>
+        <Column field="title" header="Title" style={{minWidth:'20rem'}}></Column>
+        <Column body={editBodyTemplate} style={{width:'4rem'}}></Column>
       </DataTable>
     </div>
   )
