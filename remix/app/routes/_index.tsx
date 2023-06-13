@@ -1,6 +1,6 @@
 import type { V2_MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { Link, useLoaderData } from "@remix-run/react";
 
 import { Button } from "primereact/button";
 
@@ -43,6 +43,8 @@ export default function Index() {
       
       <Button label="Click" icon="pi pi-plus" onClick={e => setCount(count + 1)}></Button>
       <p>Count: {count}</p>
+      
+      <Link to="/stocks">Stocks</Link>
       
       <h2>Stocks</h2>
       {stocks.map((stock) => (

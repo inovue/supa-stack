@@ -27,7 +27,7 @@ npx supabase init
 
 
 ## UI (PrimeFace)
-* [PrimeFlex](https://www.primefaces.org/primeflex/)
+* [PrimeFlex](https://primeflex.org/installation)
 * [PrimeIcons](https://primereact.org/icons/)
 * [PrimeReact](https://primereact.org/installation/)
 ```

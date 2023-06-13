@@ -40,7 +40,8 @@
         "esbenp.prettier-vscode",
         "ms-vscode.live-server",
         "denoland.vscode-deno",
-        "Prisma.prisma"
+        "Prisma.prisma",
+        "yigitfindikli.primeflexsnippets"
       ]
     }
   }

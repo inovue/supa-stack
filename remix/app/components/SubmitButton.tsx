@@ -1,14 +1,16 @@
 import { Button } from "primereact/button";
-import { useFormContext, useIsSubmitting } from "remix-validated-form";
+import { useIsSubmitting } from "remix-validated-form";
 
-export const SubmitButton = () => {
+type SubmitButtonProps = {
+  label?: string;
+  submittingLabel?: string;
+};
+
+export const SubmitButton = ({label, submittingLabel}:SubmitButtonProps) => {
   const isSubmitting = useIsSubmitting();
-  const { isValid } = useFormContext();
-  const disabled = isSubmitting || !isValid;
+  const labelText = isSubmitting ? (submittingLabel || label || 'Submitting...') : (label || 'Submit')
 
   return (
-    <Button type="submit" disabled={disabled} loading={isSubmitting} >
-      {isSubmitting ? "Submitting..." : "Submit"}
-    </Button>
+    <Button type="submit" disabled={isSubmitting} loading={isSubmitting} label={labelText} />
   );
 };

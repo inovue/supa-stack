@@ -9,12 +9,16 @@ import {
   ScrollRestoration,
 } from "@remix-run/react";
 
+import destyle from "destyle.css/destyle.min.css"
 import primetheme from "primereact/resources/themes/lara-light-indigo/theme.css"; //theme
 import primecore from "primereact/resources/primereact.min.css"; //core css
 import primeicons from "primeicons/primeicons.css"; //icons
 import primeflex from "primeflex/primeflex.min.css"; //primeflex
 
+
 export const links: LinksFunction = () => [
+  { rel: "stylesheet", href: destyle },
+  
   ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
 
   { rel: "stylesheet", href: primeflex },

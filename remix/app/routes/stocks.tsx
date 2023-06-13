@@ -3,46 +3,50 @@ import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 
 import { json } from "@remix-run/node";
-import { Link, useCatch, useLoaderData, useParams } from "@remix-run/react";
+import { Link,  useCatch, useLoaderData, useParams } from "@remix-run/react";
 import { db } from "~/services/db.server";
+import { classNames } from 'primereact/utils';
+import Container from '~/components/Container';
 
 
 export const loader = async () => {
   const stocks = await db.stock.findMany({
-    select: {
-      id: true,
-      title: true,
-      content: true,
-    }
+    select: { id: true, title: true, content: true }
   });
   return json(stocks);
 };
 
-export default function Subjects() {
+export default function Stocks() {
   const stocks = useLoaderData<typeof loader>();
 
   const header = (
-    <Link to="add">
-      <Button label='Add'></Button>
-    </Link>
+    <div className={classNames(['flex', 'align-items-center'])}>
+      <div className={classNames(['text-2xl', 'font-bold'])}>Stocks</div>
+      <div className={classNames(['flex-1'])}></div>
+      <Link to="create">
+        <Button size='small' label='New' icon="pi pi-file" />
+      </Link>
+    </div>
   )
   const footer = (
     <div>{`In total there are ${stocks ? stocks.length : 0} stocks.`}</div>
   )
   const editBodyTemplate = (stock:typeof stocks[0]) => (
     <Link to={`${stock.id}/edit`}>
-      <Button label='Edit' />
+      <Button text label='Edit' />
     </Link>
   )
   return (
-    <div className="card">
+    <div>
       <DataTable value={stocks} header={header} footer={footer} tableStyle={{ minWidth: '60rem' }}>
-        <Column field="title" header="Title"></Column>
         <Column body={editBodyTemplate}></Column>
+        <Column field="id" header="ID"></Column>
+        <Column field="title" header="Title"></Column>
       </DataTable>
     </div>
   )
 }
+
 
 export function CatchBoundary() {
   const caught = useCatch();
