@@ -35,10 +35,11 @@ export default function Stocks() {
       <Button text label='Edit' />
     </Link>
   )
+  
+  
   return (
     <div>
       <DataTable value={stocks} header={header} footer={footer} size='small' tableStyle={{ }}>
-        
         <Column field="id" header="ID"  style={{width:'6rem'}}></Column>
         <Column field="title" header="Title" style={{minWidth:'20rem'}}></Column>
         <Column body={editBodyTemplate} style={{width:'4rem'}}></Column>
