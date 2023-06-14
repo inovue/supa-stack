@@ -6,7 +6,6 @@ import { json } from "@remix-run/node";
 import { Link,  useCatch, useLoaderData, useParams } from "@remix-run/react";
 import { db } from "~/services/db.server";
 import { classNames } from 'primereact/utils';
-import Container from '~/components/Container';
 
 
 export const loader = async () => {

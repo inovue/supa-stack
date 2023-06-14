@@ -1,17 +1,12 @@
-import { Alert, AlertDescription, AlertIcon, AlertTitle } from "@chakra-ui/react";
 import { classNames } from "primereact/utils";
+import React from "react";
 
-type ErrorProps = {
-  title?: React.ReactNode;
-  description?: React.ReactNode;
-};
-
-export function ErrorBox({ title, description }: ErrorProps) {
+export const ErrorBox:React.FC<{title?:string, description?:string}> = ({ title, description }) => {
   return (
-    <Alert status="error" variant="subtle" flexDirection="column" alignItems="center" justifyContent="center" textAlign="center" height="200px" >
-      <AlertIcon boxSize="40px" mr={0} />
-      { title && <title className={classNames(['mt-4', 'mb-1', 'text-lg'])}>{title}</title> }
-      { description && <div>{description}</div> }
-    </Alert>
+    <div className={classNames(['flex', 'flex-column', 'align-items-center', 'bg-red-200', 'p-3', 'justify-content-center', 'text-center' ])} style={{height:'200px'}} >
+      <i className={classNames(['pi', 'pi-exclamation-circle', 'text-red-600' ])} style={{fontSize:'2.5rem'}}/>
+      { title && <div className={classNames(['mt-3', 'mb-1', 'text-lg', 'font-bold'])}>{title}</div> }
+      { description && <div className={classNames([])} >{description}</div> }
+    </div>
   );
 }

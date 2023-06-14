@@ -8,10 +8,9 @@ type FormInputProps = {
   name: string;
   label?: string;
   description?: string;
-  isRequired?: boolean;
 };
 
-export const FormInput = ({ name, label, description, isRequired, ...rest }: FormInputProps & InputTextProps) => {
+export const FormInput = ({ name, label, description, ...rest }: FormInputProps & InputTextProps) => {
   const { getInputProps, error } = useField(name);
   const ariaDescribedId = `${name}-help`
   return (
