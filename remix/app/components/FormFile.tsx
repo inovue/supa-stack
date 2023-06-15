@@ -29,8 +29,17 @@ const FormFile: React.FC = () => {
     // ファイルの処理を行う場合はここに追加する
   };
 
-  const changeDropAreaStyle = (activate:boolean) => {
+  const setDropAreaStyle = (activate:boolean) => {
     activate ? dropareaRef.current?.classList.add('bg-blue-100'): dropareaRef.current?.classList.remove('bg-blue-100')
+  }
+
+  const onDragOverHandler = (event:DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setDropAreaStyle(true);
+  }
+  const onDragLeaveHandler = (event:DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setDropAreaStyle(false);
   }
 
   return (
@@ -39,16 +48,16 @@ const FormFile: React.FC = () => {
       <div 
         onClick={handleClick} 
         onDrop={handleDrop} 
-        onDragOver={(event) => {event.preventDefault();changeDropAreaStyle(true)}}
-        onDragLeave={()=>changeDropAreaStyle(false)} 
-        onDropCapture={()=>changeDropAreaStyle(false)}
-        onDragEnd={()=>changeDropAreaStyle(false)}
-        className={classNames(['droparea', 'flex', 'flex-column', 'align-items-center', 'justify-content-center', 'hover:bg-gray-100', 'border-round', 'text-gray-800', 'border-gray-500', 'border-2','border-dashed', 'p-3', 'cursor-pointer'])} 
+        onDragOver={onDragOverHandler}
+        onDragLeave={onDragLeaveHandler} 
+        onDropCapture={onDragLeaveHandler}
+        onDragEnd={onDragLeaveHandler}
+        className={classNames(['flex', 'flex-column', 'align-items-center', 'justify-content-center', 'hover:bg-gray-100', 'border-round', 'text-gray-800', 'border-gray-500', 'border-2','border-dashed', 'p-3', 'cursor-pointer'])} 
         style={{aspectRatio:1}} 
         ref={dropareaRef} 
       >
         <i className={classNames(['pi', 'pi-upload'])}  style={{fontSize: '1.2rem'}}/>
-        <small className={classNames(['font-bold', 'mt-3', 'mb-1'])}>Drop File</small>
+        <small className={classNames(['font-bold', 'mt-3', 'mb-1'])}>Upload File</small>
       </div>
     </>
   );

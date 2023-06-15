@@ -5,6 +5,22 @@
       "path": "./"
     },
     {
+      "name": "remix",
+      "path": "remix"
+    },
+    {
+      "name": "remix/routes",
+      "path": "remix/app/routes"
+    },
+    {
+      "name": "remix/components",
+      "path": "remix/app/components"
+    },
+    {
+      "name": "prisma",
+      "path": "remix/prisma"
+    },
+    {
       "name": "supabase-functions",
       "path": "supabase/functions"
     }

@@ -57,6 +57,11 @@ npx prisma migrate deploy
 
 
 ### remix-validated-form
-* [https://www.remix-validated-form.io/](https://www.remix-validated-form.io/)
+* [document](https://www.remix-validated-form.io/)
 * [repo](https://github.com/airjp73/remix-validated-form)
 * [example](https://github.com/airjp73/remix-validated-form/tree/main/apps/sample-app)
+
+
+### dnd-kit
+* [React で DnD するなら、dnd kit](https://zenn.dev/hamo/articles/725e4189bfc54d)
+* [repo](https://github.com/clauderic/dnd-kit)

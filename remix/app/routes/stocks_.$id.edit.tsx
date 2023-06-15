@@ -54,6 +54,7 @@ export default function AddStock() {
   );
 }
 
+/*
 
 export function CatchBoundary() {
   const caught = useCatch();
@@ -70,3 +71,4 @@ export function ErrorBoundary() {
     <ErrorBox title={`There was an error subject by the id ${id}. Sorry.`} />
   );
 }
+*/

@@ -12,7 +12,8 @@ echo "git config --global user.name \"Your Name\""
 echo "git config --global user.email \"Your Email\""
 echo "-----------------------------------------------"
 
-cd remix && npm run setup && cd ../
+cp remix/.env.sample remix/.env
 supabase start
+cd remix && npm run setup && cd ../
 
 echo "FINISH Install"
