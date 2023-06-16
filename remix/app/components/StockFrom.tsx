@@ -25,7 +25,7 @@ export function StockForm({ defaultValues }: { defaultValues?: Partial<z.infer<t
       <div className={classNames(['flex', 'flex-column', 'gap-2'])}>
         <FormInput name="title" label="Title" />
         <FormInput name="content" label="Content" />
-        <div style={{width:'150px'}}> <FormFile /> </div>
+        <div style={{width:'150px'}}> <FormFile accept="image/*" multiple/> </div>
         <FormErrorBox />
         
         <div className={classNames(['flex', 'w-full', 'gap-4', 'justify-content-center', 'mt-7'])}>

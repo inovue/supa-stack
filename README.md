@@ -65,3 +65,10 @@ npx prisma migrate deploy
 ### dnd-kit
 * [React で DnD するなら、dnd kit](https://zenn.dev/hamo/articles/725e4189bfc54d)
 * [repo](https://github.com/clauderic/dnd-kit)
+
+
+
+### upload image (supabase)
+* [Remix file upload](https://remix.run/docs/en/main/guides/file-uploads)
+* [happy-days](https://github.com/dijonmusters/happy-days)
+* [supabase-remix-auth](https://github.com/aaronksaunders/supabase-remix-auth)

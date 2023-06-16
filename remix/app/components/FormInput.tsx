@@ -4,13 +4,13 @@ import type { InputTextProps } from 'primereact/inputtext';
 
 import { useField } from "remix-validated-form";
 
-type FormInputProps = {
+type FormInputProps = InputTextProps & {
   name: string;
   label?: string;
   description?: string;
 };
 
-export const FormInput = ({ name, label, description, ...rest }: FormInputProps & InputTextProps) => {
+export const FormInput:React.FC<FormInputProps> = ({ name, label, description, ...rest }: FormInputProps ) => {
   const { getInputProps, error } = useField(name);
   const ariaDescribedId = `${name}-help`
   return (

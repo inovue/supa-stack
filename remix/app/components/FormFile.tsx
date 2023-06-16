@@ -2,20 +2,34 @@ import { classNames } from 'primereact/utils';
 import type { ChangeEvent, DragEvent } from 'react';
 import { useRef } from 'react';
 
-const FormFile: React.FC = () => {
+import { Toast } from 'primereact/toast';
+import {z} from 'zod';
+
+type FormFileProps = JSX.IntrinsicElements["input"] & {
+  icon?: string;
+  label?: string;
+};
+
+// zod validation less than 500KB image file
+export const imageSchema = z.custom<File>().refine(
+  (file) => file.size < 500000 && file.type.match(/image\/(png|jpe?g|gif)/), 
+  { message: 'File must be less than 5MB and be an image' }
+);
+export const stringSchema = z.string().min(3).max(50);
+
+const FormFile: React.FC<FormFileProps> = ({ icon="pi-upload", label="Upload File", ...props }: FormFileProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const dropareaRef = useRef<HTMLDivElement>(null);
+  
+  const toastRef = useRef<Toast>(null);
+
 
   const handleDrop = (event: DragEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    const file = event.dataTransfer?.files[0];
-    if (file) {
-      const dt = new DataTransfer();
-      dt.items.add(file);
-      Object.defineProperty(inputRef.current, 'files', {
-        value: dt.files,
-        writable: false,
-      });
+    // event.preventDefault();
+    const files = event.dataTransfer?.files;
+    if (files){
+      inputRef.current!.files = files;
+      inputRef.current?.dispatchEvent(new Event('change', { bubbles: true }));
     }
   };
 
@@ -24,9 +38,19 @@ const FormFile: React.FC = () => {
   };
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    console.log(file);
-    // ファイルの処理を行う場合はここに追加する
+    console.log('cahnged file')
+    const files = event.target.files;
+    const safeData = new DataTransfer();
+
+    for (let i = 0; i < files!.length; i++) {
+      const result = imageSchema.safeParse(files![i]);
+      if(result.success){
+        // toastRef.current?.show({ severity: 'success', summary: `${files![i].name}`, life: 3000 })
+        safeData.items.add(files![i])
+      }else{
+        toastRef.current?.show({ severity: 'error', summary: `${files![i].name}`, detail: result.error.issues[0].message, life: 3000 })
+      }
+    }
   };
 
   const setDropAreaStyle = (activate:boolean) => {
@@ -42,9 +66,12 @@ const FormFile: React.FC = () => {
     setDropAreaStyle(false);
   }
 
+
+
   return (
     <>
-      <input type="file" style={{ display: 'none' }} ref={inputRef} onChange={handleFileChange} />
+      <Toast ref={toastRef} position="bottom-right" />
+      <input type="file" style={{ display: 'none' }} ref={inputRef} onChangeCapture={handleFileChange} {...props} />
       <div 
         onClick={handleClick} 
         onDrop={handleDrop} 
@@ -56,8 +83,8 @@ const FormFile: React.FC = () => {
         style={{aspectRatio:1}} 
         ref={dropareaRef} 
       >
-        <i className={classNames(['pi', 'pi-upload'])}  style={{fontSize: '1.2rem'}}/>
-        <small className={classNames(['font-bold', 'mt-3', 'mb-1'])}>Upload File</small>
+        {icon && <i className={classNames(['pi', icon])}  style={{fontSize: '1.2rem'}}/>}
+        {label && <small className={classNames(['font-bold', 'mt-3', 'mb-1'])}>{label}</small>}
       </div>
     </>
   );
