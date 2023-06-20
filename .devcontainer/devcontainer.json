@@ -37,6 +37,7 @@
       },
       "extensions": [
         "GitHub.copilot",
+        "GitHub.copilot-chat",
         "esbenp.prettier-vscode",
         "ms-vscode.live-server",
         "denoland.vscode-deno",

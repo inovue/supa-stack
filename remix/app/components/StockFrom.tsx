@@ -21,18 +21,23 @@ export function StockForm({ defaultValues }: { defaultValues?: Partial<z.infer<t
   let navigate = useNavigate();
 
   return (
-    <ValidatedForm validator={stockFormValidator} defaultValues={defaultValues} method="post" noValidate >
-      <div className={classNames(['flex', 'flex-column', 'gap-2'])}>
-        <FormInput name="title" label="Title" />
-        <FormInput name="content" label="Content" />
-        <div style={{width:'150px'}}> <FormFile accept="image/*" multiple/> </div>
-        <FormErrorBox />
-        
-        <div className={classNames(['flex', 'w-full', 'gap-4', 'justify-content-center', 'mt-7'])}>
-          <SubmitButton />
-          <Button outlined onClick={() => navigate(-1)} label="Cancel" />
+    <>
+      <ValidatedForm validator={stockFormValidator} defaultValues={defaultValues} method="post" noValidate >
+        <div className={classNames(['flex', 'flex-column', 'gap-2'])}>
+          <FormInput name="title" label="Title" />
+          <FormInput name="content" label="Content" />
+          
+          <FormErrorBox />
+          
+          <div className={classNames(['flex', 'w-full', 'gap-4', 'justify-content-center', 'mt-7'])}>
+            <SubmitButton />
+            <Button outlined onClick={() => navigate(-1)} label="Cancel" />
+          </div>
         </div>
-      </div>
-    </ValidatedForm>
+      </ValidatedForm>
+      
+      <FormFile style={{width:'200px'}} id="files" name="files" accept="image/*" multiple/>
+    </>
+
   );
 }
