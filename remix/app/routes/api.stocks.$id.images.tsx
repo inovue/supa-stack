@@ -43,10 +43,14 @@ const supabaseUploadHandler = (supabaseClient: SupabaseClient, bucketName: strin
         upsert: true,
       });
       if (error) throw new Error(`Supabase Storage Error,` + error.message);
+      if (!data) throw new Error("Supabase Storage Error, no data returned");
+
+      return data.path + ' :)';
+
     } catch (e) {
       if (e instanceof Error) throw e;
     }
-    return filename;
+    
   };
 };
 
@@ -88,12 +92,14 @@ export const action: ActionFunction = async ({ request, context, params }) => {
     
     const formData = await parseMultipartFormData( request, uploadHandler );
     // const imageUrl = formData.get("avatar");
-    // log all formdata
-    /*
+
+    console.log('============formData=============')
     for (const [key, value] of formData.entries()) {
       console.log(`${key}: ${value}`);
     }
-    */
+    console.log('=================================')
+    
+
     return json({ message: "success" });
   
   }catch(e){
