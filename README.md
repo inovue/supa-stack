@@ -72,3 +72,5 @@ npx prisma migrate deploy
 * [Remix file upload](https://remix.run/docs/en/main/guides/file-uploads)
 * [happy-days](https://github.com/dijonmusters/happy-days)
 * [supabase-remix-auth](https://github.com/aaronksaunders/supabase-remix-auth)
+
+* [Remix upload + sharp](https://github.com/Shelf-nu/shelf.nu/blob/e598f4b6ea1778c1e2184d68b114db9abc93c152/app/utils/storage.server.ts#L48)
