@@ -14,6 +14,9 @@ model Stock {
   title String?
   content String?
 
+  mediaBox MediaBox? @relation(fields:[mediaBoxId], references:[id])
+  mediaBoxId Int?
+
   commentBoard CommentBoard? @relation(fields: [commentBoardId], references: [id])
   commentBoardId Int?
 
@@ -22,11 +25,27 @@ model Stock {
   deletedAt DateTime?
 }
 
-
-model Image {
+model MediaBox {
   id Int @id @default(autoincrement())
-  url String
+
+  stocks Stock[]
+  medias Media[]
+
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  deletedAt DateTime?
+}
+
+model Media {
+  id Int @id @default(autoincrement())
+  path String
+  filename String
+  contentType String
+  
   caption String?
+
+  mediaBox MediaBox? @relation(fields:[mediaBoxId], references:[id])
+  mediaBoxId Int?
 
   commentBoard CommentBoard? @relation(fields: [commentBoardId], references: [id])
   commentBoardId Int?
@@ -58,7 +77,7 @@ model CommentBoard {
   name String?
   
   stocks Stock[]
-  images Image[]
+  medias Media[]
 
   comments Comment[]
 
