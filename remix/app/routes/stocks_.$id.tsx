@@ -7,9 +7,9 @@ import { z } from "zod";
 
 import { db } from "~/services/db.server";
 
-import { ErrorBox } from "~/components/ErrorBox";
-import { StockForm, stockFormValidator } from "~/components/StockFrom";
-import Container from "~/components/Container";
+import { ErrorBox } from "~/components/ui/ErrorBox";
+import { StockForm, stockFormValidator } from "~/components/form/features/StockForm";
+import Container from "~/components/ui/Container";
 import { classNames } from "primereact/utils";
 
 import type {ActionFunction} from '@remix-run/node';
@@ -21,7 +21,21 @@ export const loader = async ({ params }: DataFunctionArgs) => {
 
   const stock = await db.stock.findUnique({
     where: { id: +id },
-    select: {id:true, title: true, content: true}
+    select: {
+      id:true, title: true, content: true, 
+      mediaBox:{
+        select:{
+          medias:{
+            select:{
+              id:true, path:true, contentType:true, filename:true
+            },
+            where:{
+              contentType: {startsWith: 'image/'}
+            }
+          }
+        }
+      }
+    }
   });
 
   if (!stock) throw new Response(`stock ${id} doesn't exist`, { status: 404 });
@@ -58,6 +72,7 @@ export const action: ActionFunction = async ({ request, context, params }) => {
   }
   
 };
+
 
 export default function EditStock() {
   const stock = useLoaderData<typeof loader>();

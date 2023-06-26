@@ -76,10 +76,10 @@ model CommentBoard {
   id Int @id @default(autoincrement())
   name String?
   
+  comments Comment[]
+
   stocks Stock[]
   medias Media[]
-
-  comments Comment[]
 
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt

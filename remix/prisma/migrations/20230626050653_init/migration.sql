@@ -3,6 +3,7 @@ CREATE TABLE "Stock" (
     "id" SERIAL NOT NULL,
     "title" TEXT,
     "content" TEXT,
+    "mediaBoxId" INTEGER,
     "commentBoardId" INTEGER,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -12,16 +13,29 @@ CREATE TABLE "Stock" (
 );
 
 -- CreateTable
-CREATE TABLE "Image" (
+CREATE TABLE "MediaBox" (
     "id" SERIAL NOT NULL,
-    "url" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "deletedAt" TIMESTAMP(3),
+
+    CONSTRAINT "MediaBox_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Media" (
+    "id" SERIAL NOT NULL,
+    "path" TEXT NOT NULL,
+    "filename" TEXT NOT NULL,
+    "contentType" TEXT NOT NULL,
     "caption" TEXT,
+    "mediaBoxId" INTEGER,
     "commentBoardId" INTEGER,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "deletedAt" TIMESTAMP(3),
 
-    CONSTRAINT "Image_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Media_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -64,10 +78,16 @@ CREATE TABLE "Author" (
 CREATE UNIQUE INDEX "Author_email_key" ON "Author"("email");
 
 -- AddForeignKey
+ALTER TABLE "Stock" ADD CONSTRAINT "Stock_mediaBoxId_fkey" FOREIGN KEY ("mediaBoxId") REFERENCES "MediaBox"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "Stock" ADD CONSTRAINT "Stock_commentBoardId_fkey" FOREIGN KEY ("commentBoardId") REFERENCES "CommentBoard"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Image" ADD CONSTRAINT "Image_commentBoardId_fkey" FOREIGN KEY ("commentBoardId") REFERENCES "CommentBoard"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Media" ADD CONSTRAINT "Media_mediaBoxId_fkey" FOREIGN KEY ("mediaBoxId") REFERENCES "MediaBox"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Media" ADD CONSTRAINT "Media_commentBoardId_fkey" FOREIGN KEY ("commentBoardId") REFERENCES "CommentBoard"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Comment" ADD CONSTRAINT "Comment_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "Author"("id") ON DELETE SET NULL ON UPDATE CASCADE;

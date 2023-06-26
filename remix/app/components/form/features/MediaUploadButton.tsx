@@ -4,6 +4,7 @@ import { useRef } from 'react';
 
 import { Toast } from 'primereact/toast';
 import {z} from 'zod';
+import { useSubmit } from '@remix-run/react';
 
 type FormFileProps = JSX.IntrinsicElements["input"] & {
   icon?: string;
@@ -17,9 +18,10 @@ export const imageSchema = z.custom<File>().refine(
   { message: 'File must be less than 5MB and be an image' }
 );
 
-const FormFile: React.FC<FormFileProps> = ({ icon="pi-upload", label="Upload File", style, onChange, ...props }: FormFileProps) => {
+const MediaUploadButton: React.FC<FormFileProps> = ({ icon="pi-upload", label="Upload File", style, onChange, ...props }: FormFileProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const dropareaRef = useRef<HTMLDivElement>(null);
+  const submit = useSubmit();
   
   const toastRef = useRef<Toast>(null);
 
@@ -46,6 +48,7 @@ const FormFile: React.FC<FormFileProps> = ({ icon="pi-upload", label="Upload Fil
         formData.append('files', files![i]);
       }
     }
+    // submit(event.currentTarget)
     fetch('/api/stocks/AA001/images', { method: 'POST', body: formData });
   };
 
@@ -103,4 +106,4 @@ const FormFile: React.FC<FormFileProps> = ({ icon="pi-upload", label="Upload Fil
   );
 };
 
-export default FormFile;
+export default MediaUploadButton;

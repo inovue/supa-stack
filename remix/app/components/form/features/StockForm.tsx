@@ -5,14 +5,22 @@ import { ValidatedForm } from "remix-validated-form";
 import { withZod } from "@remix-validated-form/with-zod";
 
 import { Button } from "primereact/button";
-import { FormInput } from "./FormInput";
-import { SubmitButton } from "./SubmitButton";
-import { FormErrorBox } from "./FormErrorBox";
-import FormFile from "./FormFile";
+import { FormInput } from "~/components/form/fields/FormInput";
+import { SubmitButton } from "~/components/form/fields/SubmitButton";
+import { FormErrorBox } from "~/components/form/ui/FormErrorBox";
+import MediaUploadButton from "~/components/form/features/MediaUploadButton";
 
 const stockSchema = z.object({
   title: z.string().nullable(),
-  content: z.string().nullable()
+  content: z.string().nullable(),
+  mediaBox: z.object({
+    medias: z.array(z.object({
+      id: z.number(),
+      path: z.string(),
+      contentType: z.string(),
+      filename:z.string()
+    }))
+  }).nullable()
 });
 
 export const stockFormValidator = withZod(stockSchema);
@@ -36,7 +44,15 @@ export function StockForm({ defaultValues }: { defaultValues?: Partial<z.infer<t
         </div>
       </ValidatedForm>
       
-      <FormFile style={{width:'200px'}} id="files" name="files" accept="image/*" multiple/>
+      <p>Medias</p>
+      <ul>
+        {defaultValues?.mediaBox?.medias?.map(media => (
+          <li key={media.id}>
+            {`${media.id } - ${media.filename} - ${media.contentType} - ${media.path}}`}
+          </li>
+        ))}
+      </ul>
+      <MediaUploadButton style={{width:'200px'}} id="files" name="files" accept="image/*" multiple />
     </>
 
   );

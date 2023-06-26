@@ -17,7 +17,7 @@ import mime from "mime/lite";
 import crypt from "crypto";
 import { db } from "~/services/db.server";
 
-const supabaseUploadHandler = (supabaseClient: SupabaseClient, bucketName: string): UploadHandler => {
+const supabaseUploadHandler = (supabaseClient: SupabaseClient, bucketName: string, mediaBoxId: number): UploadHandler => {
   return async (file) => {
     if (file.name !== "files") throw new Error("Files are required");
     if (!file.filename) throw new Error("Filename is required");
@@ -32,16 +32,17 @@ const supabaseUploadHandler = (supabaseClient: SupabaseClient, bucketName: strin
         {contentType: 'image/jpeg', quality: 75}
       );
 
-      console.log('    cropped',filename)
+      console.log('cropped:', filename)
       
       const folderPath = ((now)=>`/${now.getFullYear()}/${now.getMonth() + 1}/${now.getDate()}/`)(new Date())
       
       const { data, error } = await supabaseClient.storage.from(bucketName).upload(folderPath+filename, imageBuffer, { contentType: contentType, upsert: true });
       
-      if (error) throw new Error(`Supabase Storage Error,` + error.message);
+      if (error) throw new Error(`Supabase Storage Error, ` + error.message);
       if (!data) throw new Error("Supabase Storage Error, no data returned");
       
-      //db.stockImage.create({data: {path: data.path, stockId: 1}});
+      const media = await db.media.create({data: {mediaBoxId: mediaBoxId, path: data.path, filename: filename, contentType: contentType}});
+      console.log('media created:', media.id)
 
       return data.path;
 
@@ -104,11 +105,22 @@ export const action: ActionFunction = async ({ request, context, params }) => {
   try{
     const supabaseClient = createServerClient({request, response});
     
+    // if db.stocks.mediaBoxId is null, create new mediaBox
+    const stock = await db.stock.findUnique({where: {id: +stockId}, select: {mediaBoxId: true}})
+    if(!stock) return new Response(`Stock [${stockId}] not found`, { status: 404 });
+
+    let mediaBoxId = stock.mediaBoxId;
+    if(!mediaBoxId){
+      const newMediaBox = await db.mediaBox.create({data: {}});
+      mediaBoxId = newMediaBox.id;
+      await db.stock.update({where: {id: +stockId}, data: {mediaBoxId: mediaBoxId}});
+    } 
+
     const uploadHandler = composeUploadHandlers(
-      supabaseUploadHandler(supabaseClient, bucketName), 
+      supabaseUploadHandler(supabaseClient, bucketName, mediaBoxId), 
       createMemoryUploadHandler()
     );
-    
+
     // const formData = await request.formData();
     const formData = await parseMultipartFormData(request, uploadHandler);
     

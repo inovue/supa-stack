@@ -1,7 +1,7 @@
 import { Button } from "primereact/button";
 import { useIsSubmitting } from "remix-validated-form";
 
-type SubmitButtonProps = {
+type SubmitButtonProps = JSX.IntrinsicElements['input'] & {
   label?: string;
   submittingLabel?: string;
 };
