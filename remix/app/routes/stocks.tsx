@@ -7,11 +7,11 @@ import { Form, Link,  useCatch, useLoaderData, useParams } from "@remix-run/reac
 import { db } from "~/services/db.server";
 import { classNames } from 'primereact/utils';
 
-import type { ActionFunction } from "@remix-run/node";
+import type { ActionFunction, DataFunctionArgs } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
 
 
-export const loader = async () => {
+export const loader = async ({ request, context, params }:DataFunctionArgs) => {
   const stocks = await db.stock.findMany({
     select: { id: true, title: true, content: true },
     orderBy: { id: "desc" }
@@ -20,12 +20,12 @@ export const loader = async () => {
 };
 
 
-export const action: ActionFunction = async ({ request, context, params }) => {
+export const action = async ({ request, context, params }:DataFunctionArgs) => {
   const method = request.method.toLowerCase();
   try{
     if(method === 'post') {
       const newStock = await db.stock.create({data: {}});
-      return redirect(`/stocks/${newStock.id}`);
+      return redirect(`/stocks/${newStock.id}/edit`);
     }else{
       throw new Error('Unknown method type');
     }
@@ -53,10 +53,10 @@ export default function Stocks() {
   )
   const editBodyTemplate = (stock:typeof stocks[0]) => (
     <div className={classNames(['flex', 'justify-center', 'align-items-center'])}>
-      <Link to={`${stock.id}`}>
+      <Link to={`${stock.id}/edit`}>
         <Button text rounded label='Edit' size='small' aria-label="Edit" />
       </Link>
-      <Form action={`/stocks/${stock.id}`} method='delete'>
+      <Form action={`/stocks/${stock.id}/edit`} method='delete'>
         <Button type='submit' rounded text severity="danger" aria-label="Delete"  size='small' icon="pi pi-trash" />
       </Form>
     </div>

@@ -1,15 +1,14 @@
 import { classNames } from 'primereact/utils';
-import type { ChangeEvent, DragEvent } from 'react';
+import type { ChangeEvent, DragEvent, FormEvent } from 'react';
 import { useRef } from 'react';
 
 import { Toast } from 'primereact/toast';
 import {z} from 'zod';
-import { useSubmit } from '@remix-run/react';
+import { Form, useSubmit } from '@remix-run/react';
 
 type FormFileProps = JSX.IntrinsicElements["input"] & {
   icon?: string;
   label?: string;
-  onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
 };
 
 // zod validation less than 500KB image file
@@ -18,39 +17,31 @@ export const imageSchema = z.custom<File>().refine(
   { message: 'File must be less than 5MB and be an image' }
 );
 
-const MediaUploadButton: React.FC<FormFileProps> = ({ icon="pi-upload", label="Upload File", style, onChange, ...props }: FormFileProps) => {
+const MediaUploadButton: React.FC<FormFileProps> = ({ icon="pi-upload", label="Upload File", style, ...props }: FormFileProps) => {
+  const preInputRef = useRef<HTMLInputElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const dropareaRef = useRef<HTMLDivElement>(null);
-  const submit = useSubmit();
   
   const toastRef = useRef<Toast>(null);
-
+  const submit = useSubmit()
   
-  const onClickHandler = () => inputRef.current?.click();
   
-  const handleDrop = (event: DragEvent<HTMLDivElement>) => {
-    // event.preventDefault();
-    const files = event.dataTransfer?.files;
-    if (files){
+  const onChangePreInput = (event: ChangeEvent<HTMLInputElement>) => {
+    console.log('onChangePreInput [start]', event.currentTarget)
+    event.preventDefault();
+    const files = validateFiles(event.target.files);
+    if(files?.length){
       inputRef.current!.files = files;
       inputRef.current?.dispatchEvent(new Event('change', { bubbles: true }));
-      console.log('dispatch change event', files)
     }
   };
 
-
-  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const files = validateFiles(event.target.files);
-
-    const formData = new FormData();
-    if(files){
-      for(let i=0; i<files.length; i++){
-        formData.append('files', files![i]);
-      }
-    }
-    // submit(event.currentTarget)
-    fetch('/api/stocks/AA001/images', { method: 'POST', body: formData });
-  };
+  const onChangeForm = (event: FormEvent<HTMLFormElement>) => {
+    console.log('onChangeForm [start]', event.currentTarget)
+    event.preventDefault();
+    submit(event.currentTarget, {method:"post"} )
+    console.log('onChangeForm [end]', event.currentTarget)
+  }
 
 
   const validateFiles = (files:FileList|null):FileList|null => {
@@ -69,32 +60,46 @@ const MediaUploadButton: React.FC<FormFileProps> = ({ icon="pi-upload", label="U
   }
 
   
-  const setDropAreaStyle = (activate:boolean) => {
-    activate ? dropareaRef.current?.classList.add('bg-blue-100'): dropareaRef.current?.classList.remove('bg-blue-100')
-  }
+  
 
-  const onDragOverHandler = (event:DragEvent<HTMLDivElement>) => {
+  const onClickCard = () => preInputRef.current?.click();
+
+  const onDragOverCard = (event:DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     setDropAreaStyle(true);
   }
-  const onDragLeaveHandler = (event:DragEvent<HTMLDivElement>) => {
+  const onDragLeaveCard = (event:DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     setDropAreaStyle(false);
   }
 
+  const onDropCard = (event: DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    const files = event.dataTransfer?.files;
+    if (files){
+      preInputRef.current!.files = files;
+      preInputRef.current?.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+  };
 
+  const setDropAreaStyle = (activate:boolean) => {
+    activate ? dropareaRef.current?.classList.add('bg-blue-100'): dropareaRef.current?.classList.remove('bg-blue-100')
+  }
 
   return (
     <>
-      <Toast ref={toastRef} position="bottom-right" />
-      <input type="file" style={{ display: 'none' }} ref={inputRef} onChangeCapture={handleFileChange} {...props} />
+    <Toast ref={toastRef} position="bottom-right" />
+      <Form method='post' onChange={onChangeForm} style={{ display: 'none' }} encType='multipart/form-data' >
+        <input type="file" name='files' ref={inputRef} {...props} />
+      </Form>
+      <input type="file" name='files' ref={preInputRef} onChangeCapture={onChangePreInput}  style={{ display: 'none' }} {...props} />
       <div 
-        onClick={onClickHandler} 
-        onDrop={handleDrop} 
-        onDragOver={onDragOverHandler}
-        onDragLeave={onDragLeaveHandler} 
-        onDropCapture={onDragLeaveHandler}
-        onDragEnd={onDragLeaveHandler}
+        onClick={onClickCard} 
+        onDrop={onDropCard} 
+        onDragOver={onDragOverCard}
+        onDragLeave={onDragLeaveCard} 
+        onDropCapture={onDragLeaveCard}
+        onDragEnd={onDragLeaveCard}
         className={classNames(['flex', 'flex-column', 'align-items-center', 'justify-content-center', 'hover:bg-gray-100', 'border-round', 'text-gray-800', 'border-gray-500', 'border-2','border-dashed', 'p-3', 'cursor-pointer'])} 
         style={{aspectRatio:1, ...style}} 
         ref={dropareaRef} 

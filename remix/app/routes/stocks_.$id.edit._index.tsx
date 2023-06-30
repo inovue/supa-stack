@@ -1,50 +1,41 @@
-import type { DataFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { Link, useCatch, useLoaderData, useParams } from "@remix-run/react";
-
+import { useLoaderData } from "@remix-run/react";
 import { validationError } from "remix-validated-form";
-import { z } from "zod";
-
 import { db } from "~/services/db.server";
-
-import { ErrorBox } from "~/components/ui/ErrorBox";
 import { StockForm, stockFormValidator } from "~/components/form/features/StockForm";
-import Container from "~/components/ui/Container";
 import { classNames } from "primereact/utils";
 
-import type {ActionFunction} from '@remix-run/node';
-import { Button } from "primereact/button";
+import type { ActionFunction, DataFunctionArgs} from '@remix-run/node';
+import Container from "~/components/ui/Container";
 
 
-export const loader = async ({ params }: DataFunctionArgs) => {
-  const { id } = z.object({ id: z.string() }).parse(params);
-
+export const loader = async ({ request, context, params }:DataFunctionArgs) => {
+  
+  const stockId = params.id;
+  if(!stockId) throw new Response('Missing id', {status: 400} );
+  if(isNaN(+stockId)) throw new Response('Invalid id', {status: 400} );
+  
   const stock = await db.stock.findUnique({
-    where: { id: +id },
-    select: {
-      id:true, title: true, content: true, 
+    where: { id: +stockId },
+    select: { id: true, title: true, content: true, 
       mediaBox:{
         select:{
           medias:{
-            select:{
-              id:true, path:true, contentType:true, filename:true
-            },
-            where:{
-              contentType: {startsWith: 'image/'}
-            }
+            select:{ id:true, path:true, contentType:true, filename:true },
+            where:{ contentType: {startsWith: 'image/'} }
           }
         }
       }
     }
   });
 
-  if (!stock) throw new Response(`stock ${id} doesn't exist`, { status: 404 });
+  if (!stock) throw new Response(`stock ${stockId} doesn't exist`, { status: 404 });
 
   return json(stock);
 };
-  
 
-export const action: ActionFunction = async ({ request, context, params }) => {
+
+export const action = async ({ request, context, params }:DataFunctionArgs) => {
   const id = params.id;
   if(!id) return new Response('Missing id', {status: 400} );
   const method = request.method.toLowerCase();
@@ -77,17 +68,9 @@ export const action: ActionFunction = async ({ request, context, params }) => {
 export default function EditStock() {
   const stock = useLoaderData<typeof loader>();
   return (
-    <>
-      <nav className={classNames(['flex', 'align-items-center', 'mx-2', 'my-1', 'gap-2'])}>
-        <Link to="/stocks">
-          <Button text rounded icon="pi pi-arrow-left" size='small' aria-label="Back" />
-        </Link>
-        <div className={classNames(['font-bold', 'text-2xl'])}>{stock.id}</div>
-      </nav>
-      <Container>
-        <StockForm defaultValues={stock ?? undefined} />
-      </Container>
-    </>
+    <Container>
+      <StockForm defaultValues={stock ?? undefined} />
+    </Container>
   );
 }
 
