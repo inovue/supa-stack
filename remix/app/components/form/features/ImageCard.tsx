@@ -2,10 +2,11 @@ import { classNames } from "primereact/utils";
 
 
 export type ImageCardProps = JSX.IntrinsicElements['img'] & {
+  active?: boolean;
 }
 
 export const  ImageCard:React.FC<ImageCardProps> = (props) => {
-  const {className: _className, style: _style, ..._props} = props;
+  const {className: _className, style: _style, active, ..._props} = props;
 
   const imageProps:JSX.IntrinsicElements['img'] = {
     ..._props,
@@ -34,9 +35,8 @@ export const  ImageCard:React.FC<ImageCardProps> = (props) => {
   }
 
   return (
-    <div {...imageWrapperProps} >
-      {
-        // eslint-disable-next-line jsx-a11y/alt-text
+    <div {...imageWrapperProps} className={classNames({'border-primary': true, 'border-3':active})}>
+      { // eslint-disable-next-line jsx-a11y/alt-text
         <img {...imageProps} />
       }
     </div>

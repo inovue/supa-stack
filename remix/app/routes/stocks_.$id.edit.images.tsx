@@ -1,4 +1,4 @@
-import type { ActionFunction, DataFunctionArgs } from "@remix-run/node";
+import type { DataFunctionArgs } from "@remix-run/node";
 
 import { createServerClient } from "~/utils/supabase.server";
 import {
@@ -6,16 +6,16 @@ import {
   unstable_createMemoryUploadHandler as createMemoryUploadHandler,
   json,
   unstable_parseMultipartFormData as parseMultipartFormData,
-  redirect,
 } from "@remix-run/node";
 import { db } from "~/services/db.server";
 import { supabaseUploadHandler } from "~/utils/uploader.server";
-import { Link, Outlet, useLoaderData, useSubmit } from "@remix-run/react";
+import { Link, Outlet, useLoaderData, useParams } from "@remix-run/react";
 import MediaUploadButton from "~/components/form/features/MediaUploadButton";
 import { classNames } from "primereact/utils";
 import { ImageCard } from "~/components/form/features/ImageCard";
 
 export const loader = async ({ request, context, params }:DataFunctionArgs) => {
+  console.log("medias loader");
   const stockId = params.id;
   if(!stockId) throw new Response('Missing id', {status: 400} );
   if(isNaN(+stockId)) throw new Response('Invalid id', {status: 400} );
@@ -48,6 +48,9 @@ export const loader = async ({ request, context, params }:DataFunctionArgs) => {
     }
   };
 
+  // const firstMediaId = modifiedStock?.mediaBox?.medias?.[0]?.id;
+  // const responseInit = !firstMediaId ? {status: 200} : {status: 302, headers: { Location: `/stocks/${params.id}/edit/images/${firstMediaId}`}};
+  
   return json(modifiedStock);
 };
 
@@ -103,20 +106,54 @@ export const action = async ({ request, context, params }:DataFunctionArgs) => {
 
 
 export default function StockEditImage() {
-  const {mediaBox} = useLoaderData<typeof loader>();
+  const {mediaId} = useParams()
+  const {mediaBox:{medias}} = useLoaderData<typeof loader>();
   const colsClassNames = classNames(['col-6', 'sm:col-4', 'lg:col-3', 'xl:col-2'])
+  const isActive = (id: number) => !!mediaId && +mediaId===id
+  const mediaCount =  medias?.length ?? 0;
 
+  const getMediaId = (offset:number=0) => {
+    if(!Array.isArray(medias)) return null;
+    const index = mediaId ? medias?.findIndex(media => media.id === +mediaId) ?? -1 : -1;
+    try{
+      return medias[index+offset]?.id ?? null;
+    }catch(e){
+      return null;
+    }
+  }
+  const prevMediaId = getMediaId(-1);
+  const nextMediaId = getMediaId(1);
+  
   return (
     <>
-      <Outlet />
+      { mediaId && 0 < mediaCount &&
+        <div style={{height:'60vh', backgroundColor:'black'}} className={classNames(['w-full', 'relative', 'py-3', 'mb-4'])}>
+          <Outlet />
+          { 1 < mediaCount &&
+            <div className={classNames(['flex', 'h-full', 'absolute', 'top-0', 'w-full', 'text-white', 'align-items-center'])}>
+              {prevMediaId && 
+                <Link to={`${prevMediaId}`}>
+                  <i className={classNames(['pi','pi-arrow-left','px-3'])} />
+                </Link>
+              }
+              <div className={classNames(['flex-1'])} />
+              {nextMediaId &&
+                <Link to={`${nextMediaId}`}>
+                  <i className={classNames(['pi','pi-arrow-right','px-3'])} />
+                </Link>
+              }
+            </div>
+          }
+        </div>
+      }
       <ul className={classNames(['grid', 'm-2'])}>
         <li className={colsClassNames} >
           <MediaUploadButton id="files" name="files" accept="image/*" multiple />
         </li>
-        {mediaBox?.medias && mediaBox.medias.map(media => (
+        {medias && medias.map(media => (
           <li key={media.id} className={colsClassNames} >
             <Link to={`${media.id}`}>
-              <ImageCard src={media.publicUrl} alt={media.filename} />
+              <ImageCard src={media.publicUrl} alt={media.filename} active={isActive(media.id)}/>
             </Link>
           </li>
         ))}

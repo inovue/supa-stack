@@ -7,7 +7,10 @@ import { Form, Link,  useCatch, useLoaderData, useParams } from "@remix-run/reac
 import { db } from "~/services/db.server";
 import { classNames } from 'primereact/utils';
 
-import type { ActionFunction, DataFunctionArgs } from "@remix-run/node";
+import { Panel } from 'primereact/panel';
+import type {PanelHeaderTemplateOptions} from 'primereact/panel';
+import { Ripple } from 'primereact/ripple';
+import type { DataFunctionArgs } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
 
 
@@ -39,15 +42,35 @@ export const action = async ({ request, context, params }:DataFunctionArgs) => {
 export default function Stocks() {
   const stocks = useLoaderData<typeof loader>();
 
-  const header = (
-    <div className={classNames(['flex', 'align-items-center', 'px-3'])}>
-      <div className={classNames(['text-2xl', 'font-bold'])}>Stocks</div>
-      <div className={classNames(['flex-1'])}></div>
-      <Form method='post'>
-        <Button type='submit' size='small' label='New' icon="pi pi-file" />
-      </Form>
-    </div>
-  )
+  const panelHeader = (options:PanelHeaderTemplateOptions) => {
+    const toggleIcon = `pi ${options.collapsed ? 'pi-filter' : 'pi-minus'}`;
+        
+    return (
+      <div className={classNames(['flex', 'align-items-center', 'px-3'])}>
+        <div className={classNames(['text-2xl', 'font-bold'])}>Stocks</div>
+        <div className={classNames(['flex-1'])}></div>
+        <div>
+          <button className={options.togglerClassName} onClick={options.onTogglerClick}>
+            <span className={toggleIcon} />
+            <Ripple />
+          </button>
+        </div>
+      </div>
+    )
+  }
+  const tableHeader = () => {
+    return (
+      <Panel headerTemplate={panelHeader} toggleable>
+        <p className="m-0">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+            consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
+            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+        </p>
+      </Panel>
+    )
+  }
+
   const footer = (
     <div>{`In total there are ${stocks ? stocks.length : 0} stocks.`}</div>
   )
@@ -56,7 +79,7 @@ export default function Stocks() {
       <Link to={`${stock.id}/edit`}>
         <Button text rounded label='Edit' size='small' aria-label="Edit" />
       </Link>
-      <Form action={`/stocks/${stock.id}/edit`} method='delete'>
+      <Form action={`/stocks/${stock.id}/edit?index`} method='delete'>
         <Button type='submit' rounded text severity="danger" aria-label="Delete"  size='small' icon="pi pi-trash" />
       </Form>
     </div>
@@ -64,11 +87,14 @@ export default function Stocks() {
   
   return (
     <div>
-      <DataTable value={stocks} header={header} footer={footer} size='small' tableStyle={{ }}>
+      <DataTable value={stocks} header={tableHeader} footer={footer} size='small' tableStyle={{ }}>
         <Column field="id" header="ID"  style={{width:'6rem'}}></Column>
         <Column field="title" header="Title" style={{minWidth:'20rem'}}></Column>
         <Column body={editBodyTemplate} style={{width:'4rem'}}></Column>
       </DataTable>
+      <Form method='post'>
+        <Button type='submit' rounded icon="pi pi-plus" className={classNames(['fixed', 'right-0', 'bottom-0', 'm-5'])} />
+      </Form>
     </div>
   )
 }

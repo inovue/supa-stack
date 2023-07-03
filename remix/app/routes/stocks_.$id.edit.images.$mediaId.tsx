@@ -6,8 +6,11 @@ import { db } from "~/services/db.server";
 import { Form, useLoaderData } from "@remix-run/react";
 import { classNames } from "primereact/utils";
 
+
 export const loader = async ({ request, context, params }:DataFunctionArgs) => {
-  
+  //const {mediaBox:{medias}} = await (await parentLoader({request, context, params})).json();
+  //console.log("medias", medias);
+
   const { mediaId } = params;
   if(!mediaId) throw new Response('Missing mediaId', {status: 400} );
   if(isNaN(+mediaId)) throw new Response('Invalid mediaId', {status: 400} );
@@ -66,11 +69,12 @@ export const action = async ({ request, context, params }:DataFunctionArgs) => {
 
 export default function StockEditImage() {
   const media = useLoaderData<typeof loader>();
+  //const data = useRouteLoaderData('routes/stocks_.$id.edit.images') as typeof parentLoader;
   
   return (
     <div style={{height:'60vh', backgroundColor:'black'}} className={classNames(['w-full', 'relative', 'py-3'])}>
       <img src={media.publicUrl} alt={media.filename} style={{objectFit:"contain"}} className={classNames(['w-full', 'h-full'])} />
-      <Form method="delete" className={classNames(['absolute', 'top-0', 'right-0', 'p-3'])}>
+      <Form method="delete" className={classNames(['absolute', 'top-0', 'right-0', 'p-3', 'z-1'])}>
         <button type="submit" className={classNames(['p-button', 'p-button-danger'])}>Delete</button>
       </Form>
     </div>
